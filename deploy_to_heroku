@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+set -e -u
+
+git push heroku master
+
+while IFS= read -r line; do
+  heroku config:set "$line"
+done <.env
