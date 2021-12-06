@@ -1,5 +1,6 @@
 # My Strava App
-Just messing around and mapping my runs from Strava. Not currently deployed anywhere b/c privacy. 
+Just messing around and mapping my runs from Strava. Currently deployed at https://pk-runs.herokuapp.com/
+
 Feel free to map your own runs. Should just need to follow the Setup steps and rename the app b/c it has my initials.
 
 ## Setup
