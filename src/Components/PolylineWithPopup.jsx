@@ -22,7 +22,7 @@ const PolylineWithPopups = ({activities}) => {
         const elevationGainInFeet = getFeetFromMeters(activity.total_elevation_gain)
 
         return (<Polyline key={index}
-                          pathOptions={{color: 'blue'}}
+                          pathOptions={{color: 'rgb(27,52,79)'}}
                           positions={decode(activity.map.summary_polyline)}
                           onMouseOver={e => e.target.openPopup()}
                           onMouseOut={e => e.target.closePopup()}

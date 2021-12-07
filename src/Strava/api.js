@@ -27,3 +27,8 @@ export function getAllStravaActivities(per_page) {
     const endpoint = `https://www.strava.com/api/v3/athlete/activities?per_page=${per_page}`
     return stravaApiGet(endpoint)
 }
+
+export function getStravaAthleteStats() {
+    const endpoint = `https://www.strava.com/api/v3/athletes/${process.env.REACT_APP_STRAVA_ATHLETE_ID}/stats`
+    return stravaApiGet(endpoint)
+}

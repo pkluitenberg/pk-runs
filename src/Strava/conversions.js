@@ -14,6 +14,10 @@ export function getMinutesFromSeconds(seconds) {
     return seconds/60
 }
 
+export function getHoursFromSeconds(seconds) {
+    return seconds/60/60
+}
+
 export function getFormattedTimeFromSeconds(seconds) {
     return new Date(seconds * 1000).toISOString().substr(11, 8);
 }
