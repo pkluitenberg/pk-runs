@@ -3,8 +3,8 @@ import PropTypes from 'prop-types';
 import {Card, CardHeader, List, ListItem} from "@material-ui/core";
 
 function StatsList(props) {
-    const items = props.listItems.map(item => {
-        return <ListItem>
+    const items = props.listItems.map((item,index) => {
+        return <ListItem key={index}>
             <Card style={{width: '100%'}}>
                 <CardHeader
                     avatar={
@@ -38,7 +38,7 @@ StatsList.propTypes = {
     listTitle: PropTypes.string,
     listItems: PropTypes.arrayOf(PropTypes.shape(
         {
-            avatar: PropTypes.elementType,
+            avatar: PropTypes.object,
             title: PropTypes.string,
             subheader: PropTypes.string
         })
