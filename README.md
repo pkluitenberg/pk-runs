@@ -7,13 +7,17 @@ Feel free to map your own runs. Should just need to follow the Setup steps and r
 ### Getting Authorization Token
 Navigate to the following website:
 ```bash
-http://www.strava.com/oauth/authorize?client_id=<YOUR_CLIENT_ID>&response_type=code&redirect_uri=http://localhost/exchange_token&approval_prompt=force&scope=activity:read_all
+http://www.strava.com/oauth/authorize?client_id=REPLACE_WITH_CLIENT_ID&response_type=code&redirect_uri=http://localhost/exchange_token&approval_prompt=force&scope=activity:read_all
 ```
 You'll get redirected to a website that says "This site can't be reached". In the URL you'll see "code=". The value after the equal is our Authorization Token.
 ### Getting Access & Refresh Token
 
 ```bash
-curl -X POST https://www.strava.com/oauth/token?client_id=&client_secret=&code=&grant_type=authorization_code
+curl -X POST https: //www.strava.com/api/v3/oauth/token \
+  -d client_id=REPLACE_WITH_CLIENT_ID \
+  -d client_secret=REPLACE_WITH_CLIENT_SECRET \
+  -d code=REPLACE_WITH_CODE \
+  -d grant_type=authorization_code
 ```
 You should get a JSON response w/ your refresh_token & access_token. Put these in your .env along w/ the Client ID
 
