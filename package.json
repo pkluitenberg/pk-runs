@@ -19,13 +19,13 @@
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-leaflet": "^3.2.2",
-    "react-scripts": "4.0.1",
+    "react-scripts": "^4.0.1",
     "styled-components": "^5.3.3",
     "web-vitals": "^0.2.4"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
+    "start": "react-scripts --openssl-legacy-provider start start ",
+    "build": "react-scripts --openssl-legacy-provider build build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },

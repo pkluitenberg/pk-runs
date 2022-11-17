@@ -19,7 +19,7 @@ export function getHoursFromSeconds(seconds) {
 }
 
 export function getFormattedTimeFromSeconds(seconds) {
-    return new Date(seconds * 1000).toISOString().substr(11, 8);
+    return new Date(seconds * 1000).toISOString().substring(11, 19);
 }
 
 export function getFormattedPaceMinPerMile(miles, minutes) {
