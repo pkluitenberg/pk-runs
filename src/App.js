@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "leaflet/dist/leaflet.css";
-import { getAllStravaActivities } from "./Strava/api";
+import { getAllStravaActivities, getStravaAthleteStats } from "./Strava/api";
 import { Container, Grid } from "@material-ui/core";
 import Card from '@mui/material/Card';
 import { MapContainer, TileLayer } from "react-leaflet";
@@ -11,23 +11,38 @@ import './App.css';
 
 const App = () => {
   const [activities, setActivities] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [stats, setStats] = useState({});
+  const [loadingMap, setLoadingMap] = useState(false);
+  const [loadingStats, setLoadingStats] = useState(false);
 
   useEffect(() => {
     fetchActivities();
   }, []);
 
   const fetchActivities = () => {
-    setLoading(true);
+    setLoadingMap(true);
+    setLoadingStats(true);
+
     getAllStravaActivities().then(
       (response) => response.filter((activity) => activity.type === "Run" && activity.start_latlng.length > 0))
       .then((data) => {
         setActivities(data);
-        setLoading(false);
+        setLoadingMap(false);
       })
       .catch((error) => {
         console.log(error);
-        setLoading(false);
+        setLoadingMap(false);
+      });
+
+    getStravaAthleteStats()
+      .then((data) => {
+        setStats(data);
+        setLoadingStats(false);
+        console.log(data)
+      })
+      .catch((error) => {
+        console.log(error);
+        setLoadingStats(false);
       });
   };
 
@@ -46,11 +61,11 @@ const App = () => {
         <h3 className='text-body'>I like to run</h3>
         <h3 className='text-body'>and I like to travel</h3>
         <h3 className='text-body'>so I ran and I traveled</h3>
-        <h3 className='text-body'>and every one of those 578 runs </h3>
-        <h3 className='text-body'>from the last {getYearsAndDaysFromStart()} is mapped here</h3> {/*put a counter here*/}
+        <h3 className='text-body'>and every one of those <u>{(loadingStats || !(stats.all_run_totals)) ? "" : stats.all_run_totals.count}</u> runs </h3>
+        <h3 className='text-body'>from the last <u>{getYearsAndDaysFromStart()}</u> is mapped here</h3> {/*put a counter here*/}
 
       </Container>
-      {loading ? (
+      {loadingMap ? (
         <MapContainer
           className="map-container"
           scrollWheelZoom={false}
@@ -74,13 +89,19 @@ const App = () => {
       <Container maxWidth={false} className="data-container">
         <Grid container spacing={3}>
           <Grid item xs={4}>
-            <Card className="card"></Card>
+            <Card className="card">
+              {(loadingStats || !(stats.all_run_totals)) ? <MoonLoader className="moon-loader" /> : stats.all_run_totals.count}
+            </Card>
           </Grid>
           <Grid item xs={4}>
-            <Card className="card"></Card>
+            <Card className="card">
+              {(loadingStats || !(stats.all_run_totals)) ? <MoonLoader className="moon-loader" /> : stats.ytd_run_totals.count}
+            </Card>
           </Grid>
           <Grid item xs={4}>
-            <Card className="card"></Card>
+            <Card className="card">
+              {(loadingStats || !(stats.all_run_totals)) ? <MoonLoader className="moon-loader" /> : "Placeholder"}
+            </Card>
           </Grid>
         </Grid>
       </Container>

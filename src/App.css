@@ -12,7 +12,7 @@ body {
     align-items: center;
     margin-left: 24px;
     margin-right: 24px;
-    border-radius: 10px;
+    border-radius: 4px;
 }
 
 .text-container {
@@ -26,7 +26,7 @@ body {
     height: 100%;
     opacity: 1;
     margin: 24px;
-    border-radius: 10px;
+    border-radius: 4px;
 }
 
 .text-header {
@@ -54,8 +54,11 @@ h1 {
 }
 
 .card {
-    border-radius: 10px !important;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     flex-grow: 1;
     height: 500px;
     background: white;
+    opacity: .85;
 }
