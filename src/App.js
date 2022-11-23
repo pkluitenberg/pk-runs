@@ -1,180 +1,92 @@
 import React, { useEffect, useState } from "react";
 import "leaflet/dist/leaflet.css";
-import { getAllStravaActivities, getStravaAthleteStats } from "./Strava/api";
-import { Grid } from "@material-ui/core";
+import { getAllStravaActivities } from "./Strava/api";
+import { Container, Grid } from "@material-ui/core";
+import Card from '@mui/material/Card';
 import { MapContainer, TileLayer } from "react-leaflet";
 import PolylineWithPopup from "./Components/PolylineWithPopup";
-import StatsList from "./Components/StatsList";
-import DirectionsRunIcon from "@mui/icons-material/DirectionsRun";
-import TimerIcon from "@mui/icons-material/Timer";
-import MapIcon from "@mui/icons-material/Map";
-import LandscapeIcon from "@mui/icons-material/Landscape";
-import {
-  getFeetFromMeters,
-  getHoursFromSeconds,
-  getMilesFromMeters,
-  roundToTwoDecimalPlaces,
-} from "./Strava/conversions";
+import MoonLoader from "react-spinners/MoonLoader"
+import { DateTime } from "luxon";
+import './App.css';
 
 const App = () => {
-  const [perPage] = useState(90);
   const [activities, setActivities] = useState([]);
-  const [ytdStats, setYtdStats] = useState({});
-  const [allStats, setAllStats] = useState({});
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    getAllStravaActivities(perPage).then((response) => {
-      const allRuns = response.filter(
-        (activity) =>
-          activity.type === "Run" && activity.start_latlng.length > 0
-      );
+    fetchActivities();
+  }, []);
 
-      setActivities(allRuns);
-    });
-    getStravaAthleteStats().then((response) => {
-      setYtdStats(response.ytd_run_totals);
-      setAllStats(response.all_run_totals);
-    });
-  }, [perPage]);
+  const fetchActivities = () => {
+    setLoading(true);
+    getAllStravaActivities().then(
+      (response) => response.filter((activity) => activity.type === "Run" && activity.start_latlng.length > 0))
+      .then((data) => {
+        setActivities(data);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.log(error);
+        setLoading(false);
+      });
+  };
+
+  function getYearsAndDaysFromStart() {
+    const currentDate = DateTime.now()
+    const startDate = DateTime.fromISO("2020-01-04")
+
+    const diff = currentDate.diff(startDate, ["years", "days"]).toObject()
+    return `${diff.years} years and ${Math.trunc(diff.days)} days`
+  }
+
   return (
-    <>
-      {!activities || !ytdStats || !allStats ? (
-        <div>Loading...</div>
-      ) : (
-        <Grid
-          container
-          spacing={6}
-          className={"main-grid"}
-          style={{
-            width: "100vw",
-            height: "100vh",
-            margin: "0px",
-          }}
+    <div>
+      <Container maxWidth={false} className="text-container">
+        <h1 className='text-header'>HI, I'M PAUL</h1>
+        <h3 className='text-body'>I like to run</h3>
+        <h3 className='text-body'>and I like to travel</h3>
+        <h3 className='text-body'>so I ran and I traveled</h3>
+        <h3 className='text-body'>and every one of those 578 runs </h3>
+        <h3 className='text-body'>from the last {getYearsAndDaysFromStart()} is mapped here</h3> {/*put a counter here*/}
+
+      </Container>
+      {loading ? (
+        <MapContainer
+          className="map-container"
+          scrollWheelZoom={false}
         >
-          <Grid item xs={10}>
-            <MapContainer
-              center={[39.828175, -98.5795]}
-              zoom={4}
-              scrollWheelZoom={true}
-              style={{
-                width: "100%",
-                height: "100%",
-                borderRadius: "4px",
-                boxShadow: "16px 16px 16px rgb(239,240,244)",
-              }}
-            >
-              <TileLayer
-                attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-              />
-              <PolylineWithPopup activities={activities} />
-            </MapContainer>
+          <MoonLoader className="moon-loader" />
+        </MapContainer>
+      ) : (
+        <MapContainer
+          className="map-container"
+          center={[39.828175, -98.5795]} // center on latest run
+          zoom={4}
+          scrollWheelZoom={false}
+        >
+          <TileLayer
+            attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          />
+          <PolylineWithPopup activities={activities} />
+        </MapContainer>
+      )}
+      <Container maxWidth={false} className="data-container">
+        <Grid container spacing={3}>
+          <Grid item xs={4}>
+            <Card className="card"></Card>
           </Grid>
-          <Grid item xs={2}>
-            <Grid
-              container
-              direction="column"
-              justifyContent="center"
-              alignItems="center"
-              style={{ height: "100%", flexWrap: "nowrap" }}
-            >
-              <Grid
-                item
-                xs={6}
-                style={{
-                  height: "100%",
-                  maxWidth: "100%",
-                  width: "100%",
-                  borderRadius: "4px",
-                  backgroundColor: "white",
-                  color: "black",
-                  boxShadow: "16px 16px 16px rgb(239,240,244)",
-                }}
-              >
-                <StatsList
-                  listTitle={"YTD Totals"}
-                  listItems={[
-                    {
-                      avatar: <DirectionsRunIcon />,
-                      title: "Runs:",
-                      subheader: `${ytdStats.count}`,
-                    },
-                    {
-                      avatar: <TimerIcon />,
-                      title: "Time:",
-                      subheader: `${Math.round(
-                        getHoursFromSeconds(ytdStats.moving_time)
-                      )} hrs`,
-                    },
-                    {
-                      avatar: <MapIcon />,
-                      title: "Distance:",
-                      subheader: `${roundToTwoDecimalPlaces(
-                        getMilesFromMeters(ytdStats.distance)
-                      )} mi`,
-                    },
-                    {
-                      avatar: <LandscapeIcon />,
-                      title: "Elevation Gain:",
-                      subheader: `${Math.round(
-                        getFeetFromMeters(ytdStats.elevation_gain)
-                      )} ft`,
-                    },
-                  ]}
-                />
-              </Grid>
-              <br />
-              <Grid
-                item
-                xs={6}
-                style={{
-                  height: "100%",
-                  maxWidth: "100%",
-                  width: "100%",
-                  borderRadius: "4px",
-                  backgroundColor: "white",
-                  color: "black",
-                  boxShadow: "16px 16px 16px rgb(239,240,244)",
-                }}
-              >
-                <StatsList
-                  listTitle={"All Time Totals"}
-                  listItems={[
-                    {
-                      avatar: <DirectionsRunIcon />,
-                      title: "Runs:",
-                      subheader: `${allStats.count}`,
-                    },
-                    {
-                      avatar: <TimerIcon />,
-                      title: "Time:",
-                      subheader: `${Math.round(
-                        getHoursFromSeconds(allStats.moving_time)
-                      )} hrs`,
-                    },
-                    {
-                      avatar: <MapIcon />,
-                      title: "Distance:",
-                      subheader: `${roundToTwoDecimalPlaces(
-                        getMilesFromMeters(allStats.distance)
-                      )} mi`,
-                    },
-                    {
-                      avatar: <LandscapeIcon />,
-                      title: "Elevation Gain:",
-                      subheader: `${Math.round(
-                        getFeetFromMeters(allStats.elevation_gain)
-                      )} ft`,
-                    },
-                  ]}
-                />
-              </Grid>
-            </Grid>
+          <Grid item xs={4}>
+            <Card className="card"></Card>
+          </Grid>
+          <Grid item xs={4}>
+            <Card className="card"></Card>
           </Grid>
         </Grid>
-      )}
-    </>
+      </Container>
+    </div>
   );
 };
 
 export default App;
+

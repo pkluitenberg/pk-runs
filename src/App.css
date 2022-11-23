@@ -1,0 +1,61 @@
+body {
+    background-image: url("./Images/background-image.jpg");
+    background-attachment: fixed;
+    background-position: center;
+    background-size: cover;
+}
+
+.map-container {
+    height: 80vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-left: 24px;
+    margin-right: 24px;
+    border-radius: 10px;
+}
+
+.text-container {
+    height: 90vh;
+    opacity: 1;
+    margin-left: 1vw;
+    margin-right: 1vw;
+}
+
+.data-container {
+    height: 100%;
+    opacity: 1;
+    margin: 24px;
+    border-radius: 10px;
+}
+
+.text-header {
+    position: relative;
+    left: 5%;
+    top: 40%;
+    color: white;
+    margin: 0px;
+    opacity: 95%;
+}
+
+.text-body {
+    position: relative;
+    left: 5.3%;
+    top: 40%;
+    color: white;
+    margin: 0px;
+    opacity: 75%;
+    max-width: 50%;
+}
+
+h1 {
+    font-size: 80px;
+    max-width: 50%;
+}
+
+.card {
+    border-radius: 10px !important;
+    flex-grow: 1;
+    height: 500px;
+    background: white;
+}
