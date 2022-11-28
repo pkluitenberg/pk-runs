@@ -1,19 +1,24 @@
-import React, { useEffect, useState } from "react";
-import "leaflet/dist/leaflet.css";
-import { getAllStravaActivities, getStravaAthleteStats } from "./Strava/api";
-import { Container, Grid } from "@material-ui/core";
+import { Container, Grid, Link } from "@material-ui/core";
 import Card from '@mui/material/Card';
-import { MapContainer, TileLayer } from "react-leaflet";
-import PolylineWithPopup from "./Components/PolylineWithPopup";
-import MoonLoader from "react-spinners/MoonLoader"
+import "leaflet/dist/leaflet.css";
 import { DateTime } from "luxon";
+import moment from 'moment';
+import React, { useEffect, useState } from "react";
+import { MapContainer, TileLayer } from "react-leaflet";
+import MoonLoader from "react-spinners/MoonLoader";
+import { ResponsiveContainer, Scatter, ScatterChart, Tooltip, XAxis, YAxis } from "recharts";
 import './App.css';
-import { getMilesFromMeters, getFeetFromMeters, getHoursFromSeconds } from "./Strava/conversions"
+import PolylineWithPopup from "./Components/PolylineWithPopup";
+import { getAllStravaActivities, getStravaAthleteStats } from "./Strava/api";
+import { getFeetFromMeters, getHoursFromSeconds, getMilesFromMeters } from "./Strava/conversions";
+import InstagramIcon from '@mui/icons-material/Instagram';
+import GithubIcon from '@mui/icons-material/GitHub';
+import LinkedInIcon from '@mui/icons-material/LinkedIn';
 
 const App = () => {
   const [activities, setActivities] = useState([]);
   const [stats, setStats] = useState({});
-  const [loadingMap, setLoadingMap] = useState(false);
+  const [loadingActivities, setloadingActivities] = useState(false);
   const [loadingStats, setLoadingStats] = useState(false);
 
   useEffect(() => {
@@ -21,18 +26,18 @@ const App = () => {
   }, []);
 
   const fetchActivities = () => {
-    setLoadingMap(true);
+    setloadingActivities(true);
     setLoadingStats(true);
 
     getAllStravaActivities().then(
       (response) => response.filter((activity) => activity.type === "Run" && activity.start_latlng.length > 0))
       .then((data) => {
         setActivities(data);
-        setLoadingMap(false);
+        setloadingActivities(false);
       })
       .catch((error) => {
         console.log(error);
-        setLoadingMap(false);
+        setloadingActivities(false);
       });
 
     getStravaAthleteStats()
@@ -55,6 +60,18 @@ const App = () => {
     return `${diff.years} years and ${Math.trunc(diff.days)} days`
   }
 
+  function getDataForCharts(activities) {
+    const filteredData = activities.map((obj) => ({
+      pace: (obj.moving_time / 60) / (obj.distance * 0.000621371192),
+      date: obj.start_date_local,
+      year: moment(obj.start_date_local).format("YYYY"),
+      month: moment(obj.start_date_local).format("MMM")
+    }))
+    const sortedData = filteredData.sort((a, b) => moment(a.date) - moment(b.date))
+    console.log(sortedData)
+    return sortedData
+  }
+
   return (
     <div>
       <Container maxWidth={false} className="text-container">
@@ -66,12 +83,12 @@ const App = () => {
         <h3 className='text-body'>from the last <strong>{getYearsAndDaysFromStart()}</strong> is mapped here</h3> {/*put a counter here*/}
 
       </Container>
-      {loadingMap ? (
+      {loadingActivities ? (
         <MapContainer
           className="map-container"
           scrollWheelZoom={false}
         >
-          <MoonLoader className="moon-loader" />
+          <MoonLoader />
         </MapContainer>
       ) : (
         <MapContainer
@@ -92,33 +109,51 @@ const App = () => {
           <Grid item xs={4}>
             <Card className="card">
               {(loadingStats || !(stats.all_run_totals))
-                ? <MoonLoader className="moon-loader" />
+                ? <MoonLoader />
                 : <center>
-                  <span className="all-time-stats-values">{Math.round(getMilesFromMeters(stats.all_run_totals.distance))}<br /></span>
+                  <span className="all-time-stats-values"><b>{Math.round(getMilesFromMeters(stats.all_run_totals.distance))}</b><br /></span>
                   <span>Miles Run<br /></span>
-                  <span className="all-time-stats-values">{Math.round(getFeetFromMeters(stats.all_run_totals.elevation_gain))}<br /></span>
+                  <span className="all-time-stats-values"><b>{Math.round(getFeetFromMeters(stats.all_run_totals.elevation_gain))}</b><br /></span>
                   <span>Feet of Elevation<br /></span>
-                  <span className="all-time-stats-values">{Math.round(getHoursFromSeconds(stats.all_run_totals.elapsed_time))}<br /></span>
-                  <span>Hours On My Feet</span>
+                  <span className="all-time-stats-values"><b>{Math.round(getHoursFromSeconds(stats.all_run_totals.elapsed_time))}</b><br /></span>
+                  <span>Hours Spent Running</span>
                 </center>
               }
             </Card>
           </Grid>
           <Grid item xs={4}>
             <Card className="card">
-              {(loadingStats || !(stats.all_run_totals)) ? <MoonLoader className="moon-loader" /> : stats.ytd_run_totals.count}
+              {(loadingActivities || !(stats.all_run_totals))
+                ? <MoonLoader />
+                : <ResponsiveContainer>
+                  <ScatterChart margin={{ top: 24, bottom: 24, left: 24, right: 24 }} data={getDataForCharts(activities)}>
+                    <XAxis xAxisId={0} dataKey="month" type="category" />
+                    <XAxis xAxisId={1} dataKey="year" allowDuplicatedCategory={false} type="category" axisLine={false} />
+                    <YAxis dataKey="pace" name="Pace" axisLine={false} domain={[5, 16]} tick={false} width={0} />
+                    <Tooltip cursor={{ strokeDasharray: '3 3' }} />
+                    <Scatter fill="black" />
+                  </ScatterChart>
+                </ResponsiveContainer>
+              }
             </Card>
           </Grid>
           <Grid item xs={4}>
             <Card className="card">
-              {(loadingStats || !(stats.all_run_totals)) ? <MoonLoader className="moon-loader" /> : "Placeholder"}
+              {(loadingStats || !(stats.all_run_totals)) ? <MoonLoader /> : "Placeholder"}
             </Card>
           </Grid>
         </Grid >
       </Container >
+      <Container maxWidth={false} className="footer-container">
+        <div className="footer">
+          <span> &copy; Paul Kluitenberg</span>
+          <Link href="https://github.com/pkluitenberg" className="footer-link"><GithubIcon className="icons" /></Link>
+          <Link href="https://instagram.com/d_townpaul" className="footer-link"><InstagramIcon className="icons" /></Link>
+          <Link href="https://www.linkedin.com/in/paulkluitenberg/" className="footer-link"><LinkedInIcon className="icons" /></Link>
+        </div>
+      </Container>
     </div >
   );
 };
 
 export default App;
-

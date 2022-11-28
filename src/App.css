@@ -24,8 +24,11 @@ body {
 
 .data-container {
     height: 100%;
-    opacity: 1;
-    margin: 24px;
+    /* margin: 24px; */
+    margin-left: 24px;
+    margin-right: 24px;
+    margin-top: 24px;
+    margin-bottom: 12px;
     border-radius: 4px;
 }
 
@@ -63,15 +66,32 @@ h1 {
     opacity: .85;
 }
 
-.stats-card {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-grow: 1;
-    height: 224px;
-    background: blue;
-}
-
 .all-time-stats-values {
     font-size: 6rem;
+}
+
+.graph-container {
+    width: 100%;
+    height: 100%;
+}
+
+.footer-container {
+    height: 24px;
+}
+
+.footer {
+    display: flex;
+    justify-content: right;
+    color: white;
+    opacity: 75%;
+    margin-bottom: 12px;
+}
+
+.icons {
+    margin-left: 8px;
+    font-size: inherit;
+}
+
+.footer-link {
+    color: inherit !important;
 }
