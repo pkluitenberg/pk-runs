@@ -8,6 +8,7 @@ import PolylineWithPopup from "./Components/PolylineWithPopup";
 import MoonLoader from "react-spinners/MoonLoader"
 import { DateTime } from "luxon";
 import './App.css';
+import { getMilesFromMeters, getFeetFromMeters, getHoursFromSeconds } from "./Strava/conversions"
 
 const App = () => {
   const [activities, setActivities] = useState([]);
@@ -61,8 +62,8 @@ const App = () => {
         <h3 className='text-body'>I like to run</h3>
         <h3 className='text-body'>and I like to travel</h3>
         <h3 className='text-body'>so I ran and I traveled</h3>
-        <h3 className='text-body'>and every one of those <u>{(loadingStats || !(stats.all_run_totals)) ? "" : stats.all_run_totals.count}</u> runs </h3>
-        <h3 className='text-body'>from the last <u>{getYearsAndDaysFromStart()}</u> is mapped here</h3> {/*put a counter here*/}
+        <h3 className='text-body'>and every one of those <strong>{(loadingStats || !(stats.all_run_totals)) ? "" : stats.all_run_totals.count}</strong> runs </h3>
+        <h3 className='text-body'>from the last <strong>{getYearsAndDaysFromStart()}</strong> is mapped here</h3> {/*put a counter here*/}
 
       </Container>
       {loadingMap ? (
@@ -90,7 +91,17 @@ const App = () => {
         <Grid container spacing={3}>
           <Grid item xs={4}>
             <Card className="card">
-              {(loadingStats || !(stats.all_run_totals)) ? <MoonLoader className="moon-loader" /> : stats.all_run_totals.count}
+              {(loadingStats || !(stats.all_run_totals))
+                ? <MoonLoader className="moon-loader" />
+                : <center>
+                  <span className="all-time-stats-values">{Math.round(getMilesFromMeters(stats.all_run_totals.distance))}<br /></span>
+                  <span>Miles Run<br /></span>
+                  <span className="all-time-stats-values">{Math.round(getFeetFromMeters(stats.all_run_totals.elevation_gain))}<br /></span>
+                  <span>Feet of Elevation<br /></span>
+                  <span className="all-time-stats-values">{Math.round(getHoursFromSeconds(stats.all_run_totals.elapsed_time))}<br /></span>
+                  <span>Hours On My Feet</span>
+                </center>
+              }
             </Card>
           </Grid>
           <Grid item xs={4}>
@@ -103,9 +114,9 @@ const App = () => {
               {(loadingStats || !(stats.all_run_totals)) ? <MoonLoader className="moon-loader" /> : "Placeholder"}
             </Card>
           </Grid>
-        </Grid>
-      </Container>
-    </div>
+        </Grid >
+      </Container >
+    </div >
   );
 };
 

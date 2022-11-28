@@ -62,3 +62,16 @@ h1 {
     background: white;
     opacity: .85;
 }
+
+.stats-card {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-grow: 1;
+    height: 224px;
+    background: blue;
+}
+
+.all-time-stats-values {
+    font-size: 6rem;
+}
