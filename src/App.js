@@ -23,7 +23,7 @@ const App = () => {
   const [stats, setStats] = useState({});
   const [loadingActivities, setloadingActivities] = useState(false);
   const [loadingStats, setLoadingStats] = useState(false);
-  const [system, setSystem] = useState(0);
+  const [system, setSystem] = useState(false);
 
   useEffect(() => {
     fetchActivities();
@@ -103,8 +103,8 @@ const App = () => {
             exclusive
             onChange={handleSystemChange}
           >
-            <ToggleButton value={0}>MI</ToggleButton>
-            <ToggleButton value={1}>KM</ToggleButton>
+            <ToggleButton value={false}>MI</ToggleButton>
+            <ToggleButton value={true}>KM</ToggleButton>
           </ToggleButtonGroup>
           <TileLayer
             attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a>'
@@ -119,7 +119,7 @@ const App = () => {
             <Card className="card">
               {(loadingStats || !(stats.all_run_totals))
                 ? <MoonLoader />
-                : <AllTimeStats stats={stats} />
+                : <AllTimeStats stats={stats} system={system} />
               }
             </Card>
           </Grid>

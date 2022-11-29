@@ -1,9 +1,9 @@
 export function getMilesFromMeters(meters) {
-    return meters*0.000621371192;
+    return meters * 0.000621371192;
 }
 
 export function getFeetFromMeters(feet) {
-    return feet*3.2808399;
+    return feet * 3.2808399;
 }
 
 export function roundToTwoDecimalPlaces(num) {
@@ -11,11 +11,11 @@ export function roundToTwoDecimalPlaces(num) {
 }
 
 export function getMinutesFromSeconds(seconds) {
-    return seconds/60
+    return seconds / 60
 }
 
 export function getHoursFromSeconds(seconds) {
-    return seconds/60/60
+    return seconds / 60 / 60
 }
 
 export function getFormattedTimeFromSeconds(seconds) {
@@ -23,7 +23,23 @@ export function getFormattedTimeFromSeconds(seconds) {
 }
 
 export function getFormattedPaceMinPerMile(miles, minutes) {
-    const pace = minutes/miles
+    const pace = minutes / miles
     const paceSeconds = pace % 1
-    return `${Math.floor(pace)}:${Math.round(paceSeconds*60)}`
+    return `${Math.floor(pace)}:${Math.round(paceSeconds * 60)}`
+}
+
+export function convertStravaDistance(distance, system) {
+    if (system) {
+        return distance * 0.001
+    } else {
+        return distance * 0.000621371192
+    }
+}
+
+export function convertStravaHeight(distance, system) {
+    if (system) {
+        return distance
+    } else {
+        return distance * 3.2808399
+    }
 }
