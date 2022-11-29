@@ -1,20 +1,24 @@
 import { Container, Grid, Link } from "@material-ui/core";
+import EmailIcon from '@mui/icons-material/Email';
+import GithubIcon from '@mui/icons-material/GitHub';
+import InstagramIcon from '@mui/icons-material/Instagram';
+import LinkedInIcon from '@mui/icons-material/LinkedIn';
 import Card from '@mui/material/Card';
+import dayjs from "dayjs";
+import advancedFormat from "dayjs/plugin/advancedFormat";
+import isoWeek from "dayjs/plugin/isoWeek";
 import "leaflet/dist/leaflet.css";
-import { DateTime } from "luxon";
-import moment from 'moment';
 import React, { useEffect, useState } from "react";
 import { MapContainer, TileLayer } from "react-leaflet";
 import MoonLoader from "react-spinners/MoonLoader";
-import { ResponsiveContainer, Scatter, ScatterChart, Tooltip, XAxis, YAxis } from "recharts";
+import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Scatter, ScatterChart, Tooltip, XAxis, YAxis } from "recharts";
 import './App.css';
 import PolylineWithPopup from "./Components/PolylineWithPopup";
 import { getAllStravaActivities, getStravaAthleteStats } from "./Strava/api";
 import { getFeetFromMeters, getHoursFromSeconds, getMilesFromMeters } from "./Strava/conversions";
-import InstagramIcon from '@mui/icons-material/Instagram';
-import GithubIcon from '@mui/icons-material/GitHub';
-import LinkedInIcon from '@mui/icons-material/LinkedIn';
-import EmailIcon from '@mui/icons-material/Email';
+
+dayjs.extend(advancedFormat);
+dayjs.extend(isoWeek);
 
 const App = () => {
   const [activities, setActivities] = useState([]);
@@ -54,23 +58,51 @@ const App = () => {
   };
 
   function getYearsAndDaysFromStart() {
-    const currentDate = DateTime.now()
-    const startDate = DateTime.fromISO("2020-01-04")
+    const diff = dayjs().diff(dayjs("2020-01-04"), "y", true);
+    const diffYears = Math.floor(diff);
+    const diffDays = Math.floor((diff - diffYears) * 365);
 
-    const diff = currentDate.diff(startDate, ["years", "days"]).toObject()
-    return `${diff.years} years and ${Math.trunc(diff.days)} days`
+    return `${diffYears} years and ${diffDays} days`;
   }
 
-  function getDataForCharts(activities) {
-    const filteredData = activities.map((obj) => ({
-      pace: (obj.moving_time / 60) / (obj.distance * 0.000621371192),
-      date: obj.start_date_local,
-      year: moment(obj.start_date_local).format("YYYY"),
-      month: moment(obj.start_date_local).format("MMM")
-    }))
-    const sortedData = filteredData.sort((a, b) => moment(a.date) - moment(b.date))
-    console.log(sortedData)
+  function getDataForScatterPlot(activities) {
+    const subsetData = activities.map((activity) => ({
+      pace: (activity.moving_time / 60) / (activity.distance * 0.000621371192),
+      date: activity.start_date_local,
+      year: dayjs(activity.start_date_local).format("YYYY"),
+      month: dayjs(activity.start_date_local).format("MMM")
+    }));
+    const sortedData = subsetData.sort((a, b) => dayjs(a.date) - dayjs(b.date));
     return sortedData
+  }
+
+  function getDataForLineChart(activities) {
+    const now = dayjs()
+    const prior = now.subtract(12, 'w')
+    const startDate = prior.startOf('isoWeek')
+
+    const filteredData = activities.filter((activity) => (dayjs(activity.start_date_local) >= startDate))
+    const subsetData = filteredData.map((activity) => ({
+      distance: Math.round(getMilesFromMeters(activity.distance),1),
+      week: parseInt(`${dayjs(activity.start_date_local).format("YYYY")}${dayjs(activity.start_date_local).format("WW")}`)
+    }))
+    
+    console.log(subsetData)
+
+    var summarizedData = [];
+    subsetData.reduce(function (accum, currentValue) {
+      console.log(`currentValue: ${currentValue}`)
+      if (!accum[currentValue.week]) {
+        accum[currentValue.week] = { week: currentValue.week, distance: 0 };
+        summarizedData.push(accum[currentValue.week])
+      }
+      accum[currentValue.week].distance += currentValue.distance;
+      return accum;
+    }, {});
+
+    const sortedData = summarizedData.sort((a, b) => a.week>b.week);
+    console.log(sortedData)
+    return sortedData;
   }
 
   return (
@@ -124,15 +156,15 @@ const App = () => {
           </Grid>
           <Grid item xs={4}>
             <Card className="card">
-              {(loadingActivities || !(stats.all_run_totals))
+              {(loadingActivities || !(activities))
                 ? <MoonLoader />
                 : <ResponsiveContainer>
-                  <ScatterChart margin={{ top: 24, bottom: 24, left: 24, right: 24 }} data={getDataForCharts(activities)}>
+                  <ScatterChart margin={{ top: 24, bottom: 24, left: 24, right: 24 }} data={getDataForScatterPlot(activities)}>
                     <XAxis xAxisId={0} dataKey="month" type="category" />
                     <XAxis xAxisId={1} dataKey="year" allowDuplicatedCategory={false} type="category" axisLine={false} />
                     <YAxis dataKey="pace" name="Pace" axisLine={false} domain={[5, 16]} tick={false} width={0} />
                     <Tooltip cursor={{ strokeDasharray: '3 3' }} />
-                    <Scatter fill="black" />
+                    <Scatter fill="black" activeDot={{ r: 8 }}/>
                   </ScatterChart>
                 </ResponsiveContainer>
               }
@@ -140,7 +172,18 @@ const App = () => {
           </Grid>
           <Grid item xs={4}>
             <Card className="card">
-              {(loadingStats || !(stats.all_run_totals)) ? <MoonLoader /> : "Placeholder"}
+              {(loadingActivities || !(activities))
+                ? <MoonLoader />
+                : <ResponsiveContainer>
+                  <AreaChart margin={{ top: 24, bottom: 24, left: 24, right: 24 }} data={getDataForLineChart(activities)}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="week" type="category"/>
+                    <YAxis axisLine={false} tick={false} width={0} type="number"/>
+                    <Tooltip cursor={{ strokeDasharray: '3 3' }} />
+                    <Area dataKey="distance" stroke="black" activeDot={{ r: 8 }} dot={{ stroke: 'black', strokeWidth: 2, r: 4, fill:"white"}} fill="#898585"/>
+                    </AreaChart>
+                </ResponsiveContainer>
+              }
             </Card>
           </Grid>
         </Grid >
