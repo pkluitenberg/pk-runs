@@ -36,7 +36,7 @@ body {
     position: relative;
     left: 5%;
     top: 40%;
-    color: white;
+    color: #F2EFE9 !important;
     margin: 0px;
     opacity: 95%;
 }
@@ -45,7 +45,7 @@ body {
     position: relative;
     left: 5.3%;
     top: 40%;
-    color: white;
+    color: #F2EFE9 !important;
     margin: 0px;
     opacity: 75%;
     max-width: 50%;
@@ -62,12 +62,9 @@ h1 {
     align-items: center;
     flex-grow: 1;
     height: 500px;
-    background: white;
+    background: #F2EFE9 !important;
+    /* background: linear-gradient(to right, #BBD2C5, #5369); */
     opacity: .85;
-}
-
-.all-time-stats-values {
-    font-size: 6rem;
 }
 
 .graph-container {
@@ -77,4 +74,12 @@ h1 {
 
 .footer-container {
     height: 24px;
+}
+
+.toggle-button {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    z-index: 10000;
+    background-color: #FFFFFF;
 }

@@ -1,5 +1,5 @@
 import { Container, Grid } from "@material-ui/core";
-import Card from '@mui/material/Card';
+import { ToggleButton, ToggleButtonGroup, Card } from '@mui/material';
 import dayjs from "dayjs";
 import advancedFormat from "dayjs/plugin/advancedFormat";
 import isoWeek from "dayjs/plugin/isoWeek";
@@ -7,12 +7,13 @@ import "leaflet/dist/leaflet.css";
 import React, { useEffect, useState } from "react";
 import { MapContainer, TileLayer } from "react-leaflet";
 import MoonLoader from "react-spinners/MoonLoader";
-import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Scatter, ScatterChart, Tooltip, XAxis, YAxis } from "recharts";
 import './App.css';
+import AllTimeStats from "./Components/AllTimeStats";
 import Footer from "./Components/Footer";
+import PaceOverTimeChart from "./Components/PaceOverTimeChart";
 import PolylineWithPopup from "./Components/PolylineWithPopup";
+import WeeklyMilesChart from "./Components/WeeklyMilesChart";
 import { getAllStravaActivities, getStravaAthleteStats } from "./Strava/api";
-import { getFeetFromMeters, getHoursFromSeconds, getMilesFromMeters } from "./Strava/conversions";
 
 dayjs.extend(advancedFormat);
 dayjs.extend(isoWeek);
@@ -22,10 +23,15 @@ const App = () => {
   const [stats, setStats] = useState({});
   const [loadingActivities, setloadingActivities] = useState(false);
   const [loadingStats, setLoadingStats] = useState(false);
+  const [system, setSystem] = useState(0);
 
   useEffect(() => {
     fetchActivities();
   }, []);
+
+  const handleSystemChange = (event, newValue) => {
+    setSystem(newValue);
+  };
 
   const fetchActivities = () => {
     setloadingActivities(true);
@@ -62,46 +68,6 @@ const App = () => {
     return `${diffYears} years and ${diffDays} days`;
   }
 
-  function getDataForScatterPlot(activities) {
-    const subsetData = activities.map((activity) => ({
-      pace: (activity.moving_time / 60) / (activity.distance * 0.000621371192),
-      date: activity.start_date_local,
-      year: dayjs(activity.start_date_local).format("YYYY"),
-      month: dayjs(activity.start_date_local).format("MMM")
-    }));
-    const sortedData = subsetData.sort((a, b) => dayjs(a.date) - dayjs(b.date));
-    return sortedData
-  }
-
-  function getDataForLineChart(activities) {
-    const now = dayjs()
-    const prior = now.subtract(12, 'w')
-    const startDate = prior.startOf('isoWeek')
-
-    const filteredData = activities.filter((activity) => (dayjs(activity.start_date_local) >= startDate))
-    const subsetData = filteredData.map((activity) => ({
-      distance: Math.round(getMilesFromMeters(activity.distance), 1),
-      week: parseInt(`${dayjs(activity.start_date_local).format("YYYY")}${dayjs(activity.start_date_local).format("WW")}`)
-    }))
-
-    console.log(subsetData)
-
-    var summarizedData = [];
-    subsetData.reduce(function (accum, currentValue) {
-      console.log(`currentValue: ${currentValue}`)
-      if (!accum[currentValue.week]) {
-        accum[currentValue.week] = { week: currentValue.week, distance: 0 };
-        summarizedData.push(accum[currentValue.week])
-      }
-      accum[currentValue.week].distance += currentValue.distance;
-      return accum;
-    }, {});
-
-    const sortedData = summarizedData.sort((a, b) => a.week > b.week);
-    console.log(sortedData)
-    return sortedData;
-  }
-
   return (
     <div>
       <Container maxWidth={false} className="text-container">
@@ -126,9 +92,22 @@ const App = () => {
           center={[39.828175, -98.5795]} // center on latest run
           zoom={4}
           scrollWheelZoom={false}
+          doubleClickZoom={true}
         >
+          <ToggleButtonGroup
+            className="toggle-button"
+            orientation="vertical"
+            size="small"
+            color="primary"
+            value={system}
+            exclusive
+            onChange={handleSystemChange}
+          >
+            <ToggleButton value={0}>MI</ToggleButton>
+            <ToggleButton value={1}>KM</ToggleButton>
+          </ToggleButtonGroup>
           <TileLayer
-            attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+            attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a>'
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
           <PolylineWithPopup activities={activities} />
@@ -140,14 +119,7 @@ const App = () => {
             <Card className="card">
               {(loadingStats || !(stats.all_run_totals))
                 ? <MoonLoader />
-                : <center>
-                  <span className="all-time-stats-values"><b>{Math.round(getMilesFromMeters(stats.all_run_totals.distance))}</b><br /></span>
-                  <span>Miles Run<br /></span>
-                  <span className="all-time-stats-values"><b>{Math.round(getFeetFromMeters(stats.all_run_totals.elevation_gain))}</b><br /></span>
-                  <span>Feet of Elevation<br /></span>
-                  <span className="all-time-stats-values"><b>{Math.round(getHoursFromSeconds(stats.all_run_totals.elapsed_time))}</b><br /></span>
-                  <span>Hours Spent Running</span>
-                </center>
+                : <AllTimeStats stats={stats} />
               }
             </Card>
           </Grid>
@@ -155,15 +127,7 @@ const App = () => {
             <Card className="card">
               {(loadingActivities || !(activities))
                 ? <MoonLoader />
-                : <ResponsiveContainer>
-                  <ScatterChart margin={{ top: 24, bottom: 24, left: 24, right: 24 }} data={getDataForScatterPlot(activities)}>
-                    <XAxis xAxisId={0} dataKey="month" type="category" />
-                    <XAxis xAxisId={1} dataKey="year" allowDuplicatedCategory={false} type="category" axisLine={false} />
-                    <YAxis dataKey="pace" name="Pace" axisLine={false} domain={[5, 16]} tick={false} width={0} />
-                    <Tooltip cursor={{ strokeDasharray: '3 3' }} />
-                    <Scatter fill="black" activeDot={{ r: 8 }} />
-                  </ScatterChart>
-                </ResponsiveContainer>
+                : <WeeklyMilesChart activities={activities} />
               }
             </Card>
           </Grid>
@@ -171,22 +135,14 @@ const App = () => {
             <Card className="card">
               {(loadingActivities || !(activities))
                 ? <MoonLoader />
-                : <ResponsiveContainer>
-                  <AreaChart margin={{ top: 24, bottom: 24, left: 24, right: 24 }} data={getDataForLineChart(activities)}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="week" type="category" />
-                    <YAxis axisLine={false} tick={false} width={0} type="number" />
-                    <Tooltip cursor={{ strokeDasharray: '3 3' }} />
-                    <Area dataKey="distance" stroke="black" activeDot={{ r: 8 }} dot={{ stroke: 'black', strokeWidth: 2, r: 4, fill: "white" }} fill="#898585" />
-                  </AreaChart>
-                </ResponsiveContainer>
+                : <PaceOverTimeChart activities={activities} />
               }
             </Card>
           </Grid>
         </Grid >
       </Container >
       <Container maxWidth={false} className="footer-container">
-        <Footer/>
+        <Footer />
       </Container>
     </div >
   );

@@ -52,7 +52,7 @@ const PolylineWithPopups = ({ activities }) => {
 };
 
 PolylineWithPopups.propTypes = {
-    activities: PropTypes.array
+    activities: PropTypes.array.isRequired
 }
 
 export default PolylineWithPopups;
