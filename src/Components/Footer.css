@@ -1,0 +1,15 @@
+.footer {
+    display: flex;
+    justify-content: right;
+    color: white;
+    opacity: 75%;
+}
+
+.icons {
+    margin-left: 8px;
+    font-size: inherit;
+}
+
+.footer-link {
+    color: inherit !important;
+}

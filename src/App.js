@@ -1,8 +1,4 @@
-import { Container, Grid, Link } from "@material-ui/core";
-import EmailIcon from '@mui/icons-material/Email';
-import GithubIcon from '@mui/icons-material/GitHub';
-import InstagramIcon from '@mui/icons-material/Instagram';
-import LinkedInIcon from '@mui/icons-material/LinkedIn';
+import { Container, Grid } from "@material-ui/core";
 import Card from '@mui/material/Card';
 import dayjs from "dayjs";
 import advancedFormat from "dayjs/plugin/advancedFormat";
@@ -13,6 +9,7 @@ import { MapContainer, TileLayer } from "react-leaflet";
 import MoonLoader from "react-spinners/MoonLoader";
 import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Scatter, ScatterChart, Tooltip, XAxis, YAxis } from "recharts";
 import './App.css';
+import Footer from "./Components/Footer";
 import PolylineWithPopup from "./Components/PolylineWithPopup";
 import { getAllStravaActivities, getStravaAthleteStats } from "./Strava/api";
 import { getFeetFromMeters, getHoursFromSeconds, getMilesFromMeters } from "./Strava/conversions";
@@ -35,7 +32,7 @@ const App = () => {
     setLoadingStats(true);
 
     getAllStravaActivities().then(
-      (response) => response.filter((activity) => activity.type === "Run" && activity.start_latlng.length > 0))
+      (response) => response.filter((activity) => activity.type === "Run"))
       .then((data) => {
         setActivities(data);
         setloadingActivities(false);
@@ -83,10 +80,10 @@ const App = () => {
 
     const filteredData = activities.filter((activity) => (dayjs(activity.start_date_local) >= startDate))
     const subsetData = filteredData.map((activity) => ({
-      distance: Math.round(getMilesFromMeters(activity.distance),1),
+      distance: Math.round(getMilesFromMeters(activity.distance), 1),
       week: parseInt(`${dayjs(activity.start_date_local).format("YYYY")}${dayjs(activity.start_date_local).format("WW")}`)
     }))
-    
+
     console.log(subsetData)
 
     var summarizedData = [];
@@ -100,7 +97,7 @@ const App = () => {
       return accum;
     }, {});
 
-    const sortedData = summarizedData.sort((a, b) => a.week>b.week);
+    const sortedData = summarizedData.sort((a, b) => a.week > b.week);
     console.log(sortedData)
     return sortedData;
   }
@@ -164,7 +161,7 @@ const App = () => {
                     <XAxis xAxisId={1} dataKey="year" allowDuplicatedCategory={false} type="category" axisLine={false} />
                     <YAxis dataKey="pace" name="Pace" axisLine={false} domain={[5, 16]} tick={false} width={0} />
                     <Tooltip cursor={{ strokeDasharray: '3 3' }} />
-                    <Scatter fill="black" activeDot={{ r: 8 }}/>
+                    <Scatter fill="black" activeDot={{ r: 8 }} />
                   </ScatterChart>
                 </ResponsiveContainer>
               }
@@ -176,12 +173,12 @@ const App = () => {
                 ? <MoonLoader />
                 : <ResponsiveContainer>
                   <AreaChart margin={{ top: 24, bottom: 24, left: 24, right: 24 }} data={getDataForLineChart(activities)}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="week" type="category"/>
-                    <YAxis axisLine={false} tick={false} width={0} type="number"/>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="week" type="category" />
+                    <YAxis axisLine={false} tick={false} width={0} type="number" />
                     <Tooltip cursor={{ strokeDasharray: '3 3' }} />
-                    <Area dataKey="distance" stroke="black" activeDot={{ r: 8 }} dot={{ stroke: 'black', strokeWidth: 2, r: 4, fill:"white"}} fill="#898585"/>
-                    </AreaChart>
+                    <Area dataKey="distance" stroke="black" activeDot={{ r: 8 }} dot={{ stroke: 'black', strokeWidth: 2, r: 4, fill: "white" }} fill="#898585" />
+                  </AreaChart>
                 </ResponsiveContainer>
               }
             </Card>
@@ -189,13 +186,7 @@ const App = () => {
         </Grid >
       </Container >
       <Container maxWidth={false} className="footer-container">
-        <div className="footer">
-          <span> &copy; Paul Kluitenberg</span>
-          <Link href="mailto:paul.kluitenberg@gmail.com" className="footer-link"><EmailIcon className="icons" /></Link>
-          <Link href="https://github.com/pkluitenberg" className="footer-link"><GithubIcon className="icons" /></Link>
-          <Link href="https://instagram.com/d_townpaul" className="footer-link"><InstagramIcon className="icons" /></Link>
-          <Link href="https://www.linkedin.com/in/paulkluitenberg/" className="footer-link"><LinkedInIcon className="icons" /></Link>
-        </div>
+        <Footer/>
       </Container>
     </div >
   );
