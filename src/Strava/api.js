@@ -1,4 +1,4 @@
-const pkRunsApiBaseUrl='https://pk-runs-api.herokuapp.com'
+const pkRunsApiBaseUrl='https://web-production-0904.up.railway.app'
 
 export async function pkRunsApiGet(endpointUrl) {
 
