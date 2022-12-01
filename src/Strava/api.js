@@ -18,6 +18,6 @@ export function getAllStravaActivities() {
 }
 
 export function getStravaAthleteStats() {
-    const endpoint = `${pkRunsApiBaseUrl}/all_stats`
+    const endpoint = `${pkRunsApiBaseUrl}/stats`
     return pkRunsApiGet(endpoint)
 }
