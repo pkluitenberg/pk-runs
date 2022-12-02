@@ -1,5 +1,5 @@
 import { Container, Grid } from "@material-ui/core";
-import { ToggleButton, ToggleButtonGroup, Card } from '@mui/material';
+import { Card, ToggleButton, ToggleButtonGroup } from '@mui/material';
 import dayjs from "dayjs";
 import advancedFormat from "dayjs/plugin/advancedFormat";
 import isoWeek from "dayjs/plugin/isoWeek";
@@ -12,7 +12,7 @@ import AllTimeStats from "./Components/AllTimeStats";
 import Footer from "./Components/Footer";
 import PaceOverTimeChart from "./Components/PaceOverTimeChart";
 import PolylineWithPopup from "./Components/PolylineWithPopup";
-import WeeklyMilesChart from "./Components/WeeklyMilesChart";
+import WeeklyDistanceChart from "./Components/WeeklyDistanceChart";
 import { getAllStravaActivities, getStravaAthleteStats } from "./Strava/api";
 
 dayjs.extend(advancedFormat);
@@ -127,7 +127,7 @@ const App = () => {
             <Card className="card">
               {(loadingActivities || !(activities))
                 ? <MoonLoader />
-                : <WeeklyMilesChart activities={activities} />
+                : <WeeklyDistanceChart activities={activities} system={system} />
               }
             </Card>
           </Grid>
@@ -135,10 +135,10 @@ const App = () => {
             <Card className="card">
               {(loadingActivities || !(activities))
                 ? <MoonLoader />
-                : <PaceOverTimeChart activities={activities} />
+                : <PaceOverTimeChart activities={activities} system={system} />
               }
             </Card>
-          </Grid>
+          </Grid>∏
         </Grid >
       </Container >
       <Container maxWidth={false} className="footer-container">
