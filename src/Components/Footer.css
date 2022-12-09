@@ -8,6 +8,12 @@
 .icons {
     margin-left: 8px;
     font-size: inherit;
+    
+}
+
+.icons:hover {
+    transform: scale(1.25);
+    transition: all .2s ease-in-out;
 }
 
 .footer-link {

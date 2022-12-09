@@ -16,7 +16,6 @@ function prepareData(activities) {
 }
 
 const PaceOverTimeChart = ({ activities, system }) => {
-    console.log(system)
     return (
         <ResponsiveContainer>
             <ScatterChart margin={{ top: 24, bottom: 24, left: 24, right: 24 }} data={prepareData(activities, system)}>
