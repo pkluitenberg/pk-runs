@@ -21,8 +21,8 @@ dayjs.extend(isoWeek);
 const App = () => {
   const [activities, setActivities] = useState([]);
   const [stats, setStats] = useState({});
-  const [loadingActivities, setloadingActivities] = useState(false);
-  const [loadingStats, setLoadingStats] = useState(false);
+  const [loadingActivities, setloadingActivities] = useState(true);
+  const [loadingStats, setLoadingStats] = useState(true);
   const [system, setSystem] = useState(false);
 
   useEffect(() => {
@@ -34,10 +34,12 @@ const App = () => {
   };
 
   const fetchActivities = () => {
+    const activityFields = ['start_latlng', 'start_date_local', 'distance', 'moving_time', 'total_elevation_gain', 'map', 'average_heartrate', 'type'];
+
     setloadingActivities(true);
     setLoadingStats(true);
 
-    getAllStravaActivities().then(
+    getAllStravaActivities(activityFields).then(
       (response) => response.filter((activity) => activity.type === "Run"))
       .then((data) => {
         setActivities(data);
@@ -52,7 +54,6 @@ const App = () => {
       .then((data) => {
         setStats(data);
         setLoadingStats(false);
-        console.log(data)
       })
       .catch((error) => {
         console.log(error);
@@ -125,7 +126,7 @@ const App = () => {
           </Grid>
           <Grid item xs={4}>
             <Card className="card">
-              {(loadingActivities || !(activities))
+              {(loadingActivities)
                 ? <MoonLoader />
                 : <WeeklyDistanceChart activities={activities} system={system} />
               }
@@ -133,7 +134,7 @@ const App = () => {
           </Grid>
           <Grid item xs={4}>
             <Card className="card">
-              {(loadingActivities || !(activities))
+              {(loadingActivities)
                 ? <MoonLoader />
                 : <PaceOverTimeChart activities={activities} system={system} />
               }
