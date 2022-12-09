@@ -12,8 +12,9 @@ export async function pkRunsApiGet(endpointUrl) {
         .catch(e => console.log(e))
 }
 
-export function getAllStravaActivities() {
-    const endpoint = `${pkRunsApiBaseUrl}/all_activities`
+export function getAllStravaActivities(fields) {
+    const fieldsParam = fields.length > 0 ? `?fields=${fields.join(',')}` : '';
+    const endpoint = `${pkRunsApiBaseUrl}/all_activities${fieldsParam}`
     return pkRunsApiGet(endpoint)
 }
 
