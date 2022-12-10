@@ -21,8 +21,8 @@ dayjs.extend(isoWeek);
 const App = () => {
   const [activities, setActivities] = useState([]);
   const [stats, setStats] = useState({});
-  const [loadingActivities, setloadingActivities] = useState(true);
-  const [loadingStats, setLoadingStats] = useState(true);
+  const [loadingActivities, setloadingActivities] = useState(false);
+  const [loadingStats, setLoadingStats] = useState(false);
   const [system, setSystem] = useState(false);
 
   useEffect(() => {
@@ -108,7 +108,8 @@ const App = () => {
             <ToggleButton value={true}>KM</ToggleButton>
           </ToggleButtonGroup>
           <TileLayer
-            attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a>'
+            attribution='&copy; <a href="https://openstreetmap.org/copyright">OpenStreetMap contributors</a>'
+            maxZoom={19}
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
           <PolylineWithPopup activities={activities} />
