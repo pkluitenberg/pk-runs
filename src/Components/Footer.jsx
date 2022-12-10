@@ -1,4 +1,4 @@
-import { Link } from "@material-ui/core";
+import { Link } from '@mui/material';
 import EmailIcon from '@mui/icons-material/Email';
 import GithubIcon from '@mui/icons-material/GitHub';
 import InstagramIcon from '@mui/icons-material/Instagram';
