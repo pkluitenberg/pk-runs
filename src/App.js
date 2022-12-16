@@ -107,9 +107,9 @@ const App = () => {
             <ToggleButton value={true}>KM</ToggleButton>
           </ToggleButtonGroup>
           <TileLayer
-            attribution='&copy; <a href="https://openstreetmap.org/copyright">OpenStreetMap contributors</a>'
-            maxZoom={19}
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            attribution='&copy; <a href="https://stadiamaps.com/">Stadia Maps</a>, &copy; <a href="https://openmaptiles.org/">OpenMapTiles</a> &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors'
+            maxZoom={20}
+            url='https://tiles.stadiamaps.com/tiles/alidade_smooth/{z}/{x}/{y}{r}.png'
           />
           <PolylineWithPopup activities={activities} />
         </MapContainer>

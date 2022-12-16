@@ -1,0 +1,34 @@
+<svg
+   width="32"
+   height="32"
+   viewBox="0 0 8.4666661 8.4666661"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+   <style>
+      @import url('https://fonts.googleapis.com/css?family=Epilogue:400');
+      .text {
+         font-size: 4.2px;
+         font-family: Epilogue;
+         font-weight: 400;
+         fill: #000000;
+      }
+
+      @media (prefers-color-scheme: dark) {
+         .text {
+            fill: #FFFFFF;
+         }
+      }
+   </style>
+   <text x="1.30" y="3.93" class='text'>
+      P
+   </text>
+   <text x="4.50" y="3.93" class='text'>
+      A
+   </text>
+   <text x="1.30" y="7.60" class='text'>
+      U
+   </text>
+   <text x="5" y="7.60" class='text'>
+      L
+   </text>
+</svg>

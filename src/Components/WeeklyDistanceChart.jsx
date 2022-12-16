@@ -42,7 +42,7 @@ const WeeklyDistanceChart = ({ activities, system }) => {
                 <XAxis dataKey="week" type="category" />
                 <YAxis axisLine={false} tick={false} width={0} type="number" />
                 <Tooltip cursor={{ strokeDasharray: '3 3' }} />
-                <Area dataKey={system ? "distanceMetric" : "distanceImperial"} stroke="black" activeDot={{ r: 8 }} dot={{ stroke: 'black', strokeWidth: 2, r: 4, fill: "white" }} fill="#898585" />
+                <Area dataKey={system ? "distanceMetric" : "distanceImperial"} stroke="black" activeDot={{ r: 8 }} dot={{ stroke: 'black', strokeWidth: 2, r: 4, fill: "white" }} fill="#C1C9CC" />
             </AreaChart>
         </ResponsiveContainer>
     )
