@@ -5,6 +5,19 @@ body {
     background-size: cover;
 }
 
+
+h1 {
+    font-size: 5rem;
+    max-width: 50%;
+}
+
+.text-container {
+    height: 90vh;
+    opacity: 1;
+    margin-left: 24px;
+    margin-right: 24px;
+}
+
 .map-container {
     height: 80vh;
     display: flex;
@@ -13,13 +26,6 @@ body {
     margin-left: 24px;
     margin-right: 24px;
     border-radius: 4px;
-}
-
-.text-container {
-    height: 90vh;
-    opacity: 1;
-    margin-left: 1vw;
-    margin-right: 1vw;
 }
 
 .data-container {
@@ -31,7 +37,7 @@ body {
     position: relative;
     left: 5%;
     top: 40%;
-    color: #F2EFE9 !important;
+    color: #F2F3F0;
     margin: 0px;
     opacity: 95%;
 }
@@ -40,16 +46,12 @@ body {
     position: relative;
     left: 5.3%;
     top: 40%;
-    color: #F2EFE9 !important;
+    color: #F2F3F0 !important;
     margin: 0px;
     opacity: 75%;
     max-width: 50%;
 }
 
-h1 {
-    font-size: 80px;
-    max-width: 50%;
-}
 
 .card {
     display: flex;
@@ -57,9 +59,7 @@ h1 {
     align-items: center;
     flex-grow: 1;
     height: 500px;
-    background: #F2EFE9 !important;
-    /* background: linear-gradient(to right, #BBD2C5, #5369); */
-    opacity: .85;
+    background: #F2F3F0 !important;
 }
 
 .graph-container {
@@ -76,5 +76,9 @@ h1 {
     top: 12px;
     right: 12px;
     z-index: 10000;
-    background-color: #FFFFFF;
+    background-color: #F2F3F0;
+}
+
+.leaflet-container {
+    background: #F2F3F0;
 }
