@@ -11,15 +11,14 @@ dayjs.extend(isoWeek);
 
 function prepareData(activities) {
     const now = dayjs()
-    const startDate = now.subtract(12, 'w').startOf('isoWeek')
+    const startDate = now.subtract(11, 'w').startOf('isoWeek')
 
     const filteredData = activities.filter((activity) => (dayjs(activity.start_date_local) >= startDate))
     const subsetData = filteredData.map((activity) => ({
         distanceMetric: Math.round(convertStravaDistance(activity.distance, true), 1),
         distanceImperial: Math.round(convertStravaDistance(activity.distance, false), 1),
-        week: parseInt(`${dayjs(activity.start_date_local).format("YYYY")}${dayjs(activity.start_date_local).format("WW")}`)
+        week: parseInt(`${dayjs(activity.start_date_local).startOf('isoWeek').format("YYYY")}${dayjs(activity.start_date_local).format("WW")}`),
     }))
-
     var summarizedData = [];
     subsetData.reduce(function (accum, currentValue) {
         if (!accum[currentValue.week]) {
@@ -30,7 +29,6 @@ function prepareData(activities) {
         accum[currentValue.week].distanceImperial += currentValue.distanceImperial;
         return accum;
     }, {});
-
     return summarizedData.sort((a, b) => a.week > b.week);
 }
 

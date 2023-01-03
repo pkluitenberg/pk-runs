@@ -16,7 +16,6 @@ function hasPolyline(activity) {
 }
 
 const PolylineWithPopups = ({ activities }) => {
-    console.log(activities)
     return activities.filter(hasPolyline).map((activity, index) => {
         const formattedDate = (activity.start_date_local).split('T')[0]
         const distanceInMiles = getMilesFromMeters(activity.distance)
