@@ -115,7 +115,7 @@ const App = () => {
       )}
       <Container maxWidth={false} className="data-container">
         <Grid container spacing={3}>
-          <Grid item sm={12} md={6} lg={4}>
+          <Grid item xs={12} sm={12} md={6} lg={4}>
             <Card className="card">
               {(loadingStats || !(stats.all_run_totals))
                 ? <MoonLoader />
@@ -123,7 +123,7 @@ const App = () => {
               }
             </Card>
           </Grid>
-          <Grid item sm={12} md={6} lg={4}>
+          <Grid item xs={12} sm={12} md={6} lg={4}>
             <Card className="card">
               {(loadingActivities)
                 ? <MoonLoader />
@@ -131,7 +131,7 @@ const App = () => {
               }
             </Card>
           </Grid>
-          <Grid item sm={12} md={6} lg={4}>
+          <Grid item xs={12} sm={12} md={6} lg={4}>
             <Card className="card">
               {(loadingActivities)
                 ? <MoonLoader />

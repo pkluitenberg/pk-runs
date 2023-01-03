@@ -1,10 +1,9 @@
 body {
     background-image: url("./Images/background-image.jpg");
     background-attachment: fixed;
-    background-position: center;
+    background-position: 60% 50%;
     background-size: cover;
 }
-
 
 h1 {
     font-size: 5rem;
@@ -12,19 +11,35 @@ h1 {
 }
 
 .text-container {
-    height: 90vh;
+    height: 70vh;
     opacity: 1;
-    margin-left: 24px;
-    margin-right: 24px;
+}
+
+.text-header {
+    position: relative;
+    left: 24px;
+    top: 24px;
+    color: black;
+    margin:0px;
+    opacity: 75%;
+}
+
+.text-body {
+    position: relative;
+    left: 24px;
+    top: 144px;
+    color: #F2F3F0 !important;
+    margin: 0px;
+    opacity: 75%;
+    max-width: 60%;
 }
 
 .map-container {
-    height: 80vh;
+    height: 50vh;
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-left: 24px;
-    margin-right: 24px;
+    margin: 0 16px;
     border-radius: 4px;
 }
 
@@ -33,32 +48,12 @@ h1 {
     margin-top: 24px;
 }
 
-.text-header {
-    position: relative;
-    left: 5%;
-    top: 40%;
-    color: #F2F3F0;
-    margin: 0px;
-    opacity: 95%;
-}
-
-.text-body {
-    position: relative;
-    left: 5.3%;
-    top: 40%;
-    color: #F2F3F0 !important;
-    margin: 0px;
-    opacity: 75%;
-    max-width: 50%;
-}
-
-
 .card {
     display: flex;
     justify-content: center;
     align-items: center;
     flex-grow: 1;
-    height: 500px;
+    height: 50vh;
     background: #F2F3F0 !important;
 }
 
@@ -82,4 +77,37 @@ h1 {
 
 .leaflet-container {
     background: #F2F3F0;
+}
+
+@media only screen and (min-width: 600px) {
+    body {
+        background-position: center;
+    }
+
+    .text-header {
+        left: 5%;
+        top: 40%;
+        color: #F2F3F0;
+        opacity: 95%;
+    }
+    
+    .text-body {
+        position: relative;
+        left: 5.3%;
+        top: 40%;
+        color: #F2F3F0 !important;
+        margin: 0px;
+        opacity: 75%;
+        max-width: 50%;
+    }
+
+    .text-container {
+        height: 90vh;
+        opacity: 1;
+    }
+    
+    .map-container {
+        height: 80vh;
+        margin: 0 24px;
+    }
 }
